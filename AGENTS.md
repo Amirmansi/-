@@ -29,6 +29,7 @@ cd ~/frappe-bench && bench start   # web :8000, socketio :9000, workers, watcher
 - Rebuild assets with `bench build` (or `bench build --app <app>`); the bench was initialized with `--skip-assets`, so assets are built post-init.
 - `erpnext_com/api.py` imports the proprietary `central` app and is only used by the conference payment flow; it is imported lazily, so app install and normal page serving work without `central`. Payment endpoints (`make_payment`) will fail without `central` + Razorpay/PayPal config.
 - `erpnext_com/utils.get_country` calls `pro.ip-api.com` and needs `ip-api-key` in site config; it only matters for geo-based pricing.
+- A brand-new Frappe site sends the first desk login through the Setup Wizard. This site is already marked complete (persisted in the snapshot DB), so `Administrator`/`admin` lands directly on the desk. In Frappe v15 the relevant flag is `Installed Application.is_setup_complete` for the `frappe` app (NOT `System Settings.setup_complete`). If the wizard ever reappears, in `bench --site erpnext.localhost console` run: `frappe.db.set_value("Installed Application", n, "is_setup_complete", 1)` for the `frappe` row, then `frappe.db.commit(); frappe.clear_cache()`. Also clear the browser's cookies/session, since a stale logged-in session keeps the cached boot.
 
 ### Lint / test / build / run quick reference (from `~/frappe-bench`)
 - Run: `bench start`
